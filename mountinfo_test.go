@@ -37,10 +37,6 @@ func TestGetMountInfo(t *testing.T) {
 	if !hasProc {
 		t.Error("could not find a proc filesystem in the mountinfo")
 	}
-
-	if !hasProc {
-		t.Error("could not find a proc filesystem in the mountinfo")
-	}
 }
 
 // TestParseMountString data set, please add more cases if you feel
