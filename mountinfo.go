@@ -7,6 +7,7 @@ import (
 	"strings"
 )
 
+// Mountinfo struct representing a mountinfo entry
 type Mountinfo struct {
 	MountID        string
 	ParentID       string
@@ -27,6 +28,7 @@ func getMountPart(pieces []string, index int) string {
 	return ""
 }
 
+// GetMountInfo opens a mountinfo file, returns
 func GetMountInfo(fd string) ([]Mountinfo, error) {
 	file, err := os.Open(fd)
 	if err != nil {
@@ -37,6 +39,7 @@ func GetMountInfo(fd string) ([]Mountinfo, error) {
 	return ParseMountInfo(file)
 }
 
+// ParseMountInfoString transforms a mountinfo string in a struct of type Mountinfo
 func ParseMountInfoString(tx string) *Mountinfo {
 	pieces := strings.Split(tx, " ")
 	count := len(pieces)
@@ -60,6 +63,7 @@ func ParseMountInfoString(tx string) *Mountinfo {
 	}
 }
 
+// ParseMountInfo parses the mountinfo content from an io.Reader, e.g a file
 func ParseMountInfo(buffer io.Reader) ([]Mountinfo, error) {
 	info := []Mountinfo{}
 	scanner := bufio.NewScanner(buffer)
