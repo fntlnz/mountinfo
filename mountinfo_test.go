@@ -76,6 +76,21 @@ func ParseMountDataset() []ParseMountData {
 				SuperOptions:   "rw,xattr,release_agent=/usr/lib/systemd/systemd-cgroups-agent,name=systemd",
 			},
 		},
+		{
+			rawline: "824 723 0:52 / /var/lib/containers/storage/overlay/62ef728cd5abf2cf711bed7912828d1283ca2b5cb2200e65941d86e22cd6c205/merged rw,nodev,relatime - overlay overlay rw,context=\"system_u:object_r:container_file_t:s0:c120,c334\",lowerdir=/var/lib/containers/storage/overlay/l/NZWCWDRTRJEXYQAOIXQLIOWOOJ:/var/lib/containers/storage/overlay/l/EG2LSO3NQSV6ZKSAG2SF7BUO4L:/var/lib/containers/storage/overlay/l/EMD4ZHWPE6MJ4KZBHPTFDVJV7B:/var/lib/containers/storage/overlay/l/MYIZJQPW4OD3J4TEJRXTMV5NVJ:/var/lib/containers/storage/overlay/l/6MMB3RGZNRYW6YZQI3FUUN2GTM:/var/lib/containers/storage/overlay/l/O5Z3Y63L3AVQLPB7WND73PQG6W:/var/lib/containers/storage/overlay/l/UACPLH6JBVALN7TSY7AYPRQT4F:/var/lib/containers/storage/overlay/l/CT6LZD32636MU36BUPS4KQ7GUK:/var/lib/containers/storage/overlay/l/S7ZQGTZDQOU5AH2E3R74EPBKW7:/var/lib/containers/storage/overlay/l/66SOAQGJFJDCHQ6G3WVQENMBEP:/var/lib/containers/storage/overlay/l/RQQO2I2OI47TML4V3DPSMMQ5KQ:/var/lib/containers/storage/overlay/l/BH2MWLJXSNYW4NRNQZHVJVF454:/var/lib/containers/storage/overlay/l/L7WEQU6QPK2GQJZUFPBHVEOBFM,upperdir=/var/lib/containers/storage/overlay/62ef728cd5abf2cf711bed7912828d1283ca2b5cb2200e65941d86e22cd6c205/diff,workdir=/var/lib/containers/storage/overlay/62ef728cd5abf2cf711bed7912828d1283ca2b5cb2200e65941d86e22cd6c205/work,metacopy=on",
+			expectedset: Mountinfo{
+				MountID:        "824",
+				ParentID:       "723",
+				MajorMinor:     "0:52",
+				Root:           "/",
+				MountPoint:     "/var/lib/containers/storage/overlay/62ef728cd5abf2cf711bed7912828d1283ca2b5cb2200e65941d86e22cd6c205/merged",
+				MountOptions:   "rw,nodev,relatime",
+				OptionalFields: "",
+				FilesystemType: "overlay",
+				MountSource:    "overlay",
+				SuperOptions:   "rw,context=\"system_u:object_r:container_file_t:s0:c120,c334\",lowerdir=/var/lib/containers/storage/overlay/l/NZWCWDRTRJEXYQAOIXQLIOWOOJ:/var/lib/containers/storage/overlay/l/EG2LSO3NQSV6ZKSAG2SF7BUO4L:/var/lib/containers/storage/overlay/l/EMD4ZHWPE6MJ4KZBHPTFDVJV7B:/var/lib/containers/storage/overlay/l/MYIZJQPW4OD3J4TEJRXTMV5NVJ:/var/lib/containers/storage/overlay/l/6MMB3RGZNRYW6YZQI3FUUN2GTM:/var/lib/containers/storage/overlay/l/O5Z3Y63L3AVQLPB7WND73PQG6W:/var/lib/containers/storage/overlay/l/UACPLH6JBVALN7TSY7AYPRQT4F:/var/lib/containers/storage/overlay/l/CT6LZD32636MU36BUPS4KQ7GUK:/var/lib/containers/storage/overlay/l/S7ZQGTZDQOU5AH2E3R74EPBKW7:/var/lib/containers/storage/overlay/l/66SOAQGJFJDCHQ6G3WVQENMBEP:/var/lib/containers/storage/overlay/l/RQQO2I2OI47TML4V3DPSMMQ5KQ:/var/lib/containers/storage/overlay/l/BH2MWLJXSNYW4NRNQZHVJVF454:/var/lib/containers/storage/overlay/l/L7WEQU6QPK2GQJZUFPBHVEOBFM,upperdir=/var/lib/containers/storage/overlay/62ef728cd5abf2cf711bed7912828d1283ca2b5cb2200e65941d86e22cd6c205/diff,workdir=/var/lib/containers/storage/overlay/62ef728cd5abf2cf711bed7912828d1283ca2b5cb2200e65941d86e22cd6c205/work,metacopy=on",
+			},
+		},
 	}
 }
 
@@ -84,7 +99,7 @@ func TestParseMountString(t *testing.T) {
 		info := ParseMountInfoString(e.rawline)
 
 		if reflect.DeepEqual(e.expectedset, *info) == false {
-			t.Error("expected set is different than the resulting set")
+			t.Errorf("Expected %v got %v", e.expectedset, *info)
 		}
 	}
 }

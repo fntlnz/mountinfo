@@ -28,9 +28,9 @@ func getMountPart(pieces []string, index int) string {
 	return ""
 }
 
-// GetMountInfo opens a mountinfo file, returns
-func GetMountInfo(fd string) ([]Mountinfo, error) {
-	file, err := os.Open(fd)
+// GetMountInfo opens a mountinfo file, returns a slice of Mountinfo structs
+func GetMountInfo(mountinfoPath string) ([]Mountinfo, error) {
+	file, err := os.Open(mountinfoPath)
 	if err != nil {
 		return nil, err
 	}
