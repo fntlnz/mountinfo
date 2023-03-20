@@ -13,6 +13,8 @@ a specific process as described in `man 5 proc`.
 
 ## Examples
 
+Need more examples? [find them in the godoc](https://pkg.go.dev/github.com/fntlnz/mountinfo).
+
 ```go
 package main
 
