@@ -1,6 +1,8 @@
 package mountinfo
 
 import (
+	"bytes"
+	"fmt"
 	"reflect"
 	"testing"
 )
@@ -8,39 +10,6 @@ import (
 type ParseMountData struct {
 	rawline     string
 	expectedset Mountinfo
-}
-
-func TestGetMountInfo(t *testing.T) {
-	minfo, err := GetMountInfo("/proc/self/mountinfo")
-	if err != nil {
-		t.Errorf("error getting mount info: %v", err)
-	}
-
-	if len(minfo) < 1 {
-		t.Error("no mountinfo found")
-	}
-
-	hasProc := false
-	hasTmpfs := false
-	for _, info := range minfo {
-		if info.FilesystemType == "proc" {
-			hasProc = true
-		}
-		if info.FilesystemType == "tmpfs" {
-			hasTmpfs = true
-		}
-		if hasProc && hasTmpfs {
-			break
-		}
-	}
-
-	if !hasProc {
-		t.Error("could not find a proc filesystem in the mountinfo")
-	}
-
-	if !hasTmpfs {
-		t.Error("could not find a tmpfs filesystem in the mountinfo")
-	}
 }
 
 // TestParseMountString data set, please add more cases if you feel
@@ -99,7 +68,26 @@ func TestParseMountString(t *testing.T) {
 		info := ParseMountInfoString(e.rawline)
 
 		if reflect.DeepEqual(e.expectedset, *info) == false {
-			t.Errorf("Expected %v got %v", e.expectedset, *info)
+			t.Errorf("expected %v got %v", e.expectedset, *info)
 		}
+	}
+}
+
+func TestParseMountInfo(t *testing.T) {
+	buf := bytes.Buffer{}
+	expectedSet := []Mountinfo{}
+	for _, e := range ParseMountDataset() {
+		buf.WriteString(fmt.Sprintf("%s\n", e.rawline))
+		expectedSet = append(expectedSet, e.expectedset)
+	}
+
+	info, err := ParseMountInfo(&buf)
+
+	if err != nil {
+		t.Errorf("expected no error, got %v", err)
+	}
+
+	if reflect.DeepEqual(expectedSet, info) == false {
+		t.Errorf("expected %v got %v", expectedSet, info)
 	}
 }

@@ -46,10 +46,13 @@ func ParseMountInfoString(tx string) *Mountinfo {
 	if count < 1 {
 		return nil
 	}
-	i := strings.Index(tx, " - ")
-	postFields := strings.Fields(tx[i+3:])
+
+	i := uint(strings.Index(tx, " - "))
+	if i > uint(len(tx)) {
+		return nil
+	}
 	preFields := strings.Fields(tx[:i])
-	return &Mountinfo{
+	minfo := &Mountinfo{
 		MountID:        getMountPart(preFields, 0),
 		ParentID:       getMountPart(preFields, 1),
 		MajorMinor:     getMountPart(preFields, 2),
@@ -57,10 +60,16 @@ func ParseMountInfoString(tx string) *Mountinfo {
 		MountPoint:     getMountPart(preFields, 4),
 		MountOptions:   getMountPart(preFields, 5),
 		OptionalFields: getMountPart(preFields, 6),
-		FilesystemType: getMountPart(postFields, 0),
-		MountSource:    getMountPart(postFields, 1),
-		SuperOptions:   getMountPart(postFields, 2),
 	}
+
+	if i+3 > uint(len(tx)) {
+		return minfo
+	}
+	postFields := strings.Fields(tx[i+3:])
+	minfo.FilesystemType = getMountPart(postFields, 0)
+	minfo.MountSource = getMountPart(postFields, 1)
+	minfo.SuperOptions = getMountPart(postFields, 2)
+	return minfo
 }
 
 // ParseMountInfo parses the mountinfo content from an io.Reader, e.g a file
@@ -69,7 +78,11 @@ func ParseMountInfo(buffer io.Reader) ([]Mountinfo, error) {
 	scanner := bufio.NewScanner(buffer)
 	for scanner.Scan() {
 		tx := scanner.Text()
-		info = append(info, *ParseMountInfoString(tx))
+		parsedMinfo := ParseMountInfoString(tx)
+		if parsedMinfo == nil {
+			continue
+		}
+		info = append(info, *parsedMinfo)
 	}
 
 	if err := scanner.Err(); err != nil {
